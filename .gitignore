@@ -1,0 +1,28 @@
+# =========================
+# FRONTEND (React / Vite)
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.DS_Store
+
+# =========================
+# BACKEND (Node / Express)
+# =========================
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/.DS_Store
+
+# =========================
+# Common OS / Editor / IDE files
+# =========================
+*.log
+.env
+.DS_Store
+Thumbs.db
+
+# =========================
+# VSCode settings
+# =========================
+.vscode/
