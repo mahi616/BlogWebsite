@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const Footer = () => {
@@ -7,7 +8,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto px-6 py-10 md:flex md:items-start md:justify-between space-y-10 md:space-y-0">
         
         {/* Branding */}
-        <div className="md:w-1/3 ">
+        <div className="md:w-1/3">
           <h2 className="text-2xl text-center font-extrabold mb-2">ModernBlogs</h2>
           <p className="text-sm text-center text-indigo-100">
             Write. Share. Inspire. Your stories deserve a beautiful home.
@@ -19,13 +20,13 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
           <ul className="space-y-2 text-indigo-100">
             <li>
-              <a href="/home" className="hover:text-white transition-colors">Home</a>
+              <Link to="/home" className="hover:text-white transition-colors">Home</Link>
             </li>
             <li>
-              <a href="/about" className="hover:text-white transition-colors">About</a>
+              <Link to="/about" className="hover:text-white transition-colors">About</Link>
             </li>
             <li>
-              <a href="/contact" className="hover:text-white transition-colors">Contact</a>
+              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
             </li>
           </ul>
         </div>
@@ -35,13 +36,12 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Connect</h3>
           <ul className="space-y-2 text-indigo-100">
             <li>
-              <a href="/login" className="hover:text-white transition-colors">Login</a>
+              <Link to="/login" className="hover:text-white transition-colors">Login</Link>
             </li>
             <li>
-              <a href="/register" className="hover:text-white transition-colors">Sign Up</a>
+              <Link to="/register" className="hover:text-white transition-colors">Sign Up</Link>
             </li>
           </ul>
-
         </div>
       </div>
 
