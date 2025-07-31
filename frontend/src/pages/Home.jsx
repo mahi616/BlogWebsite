@@ -18,7 +18,7 @@ export function Home() {
   const fetchBlogs = async () => {
     try {
       // const res = await fetch('/api/blogs');
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`);
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/blogs`);
       const data = await res.json();
 
       setFeaturedPosts(data.slice(0, 3)); // First 3 as featured
