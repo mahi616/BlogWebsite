@@ -69,7 +69,8 @@ const MyBlogs = () => {
                   onClick={() => navigate(`/blog-list/${blog._id}`)}
                 >
                   <img
-                    src={`http://localhost:5000${blog.image}`}
+                    // src={`http://localhost:5000${blog.image}`}
+                    src={`https://blogwebsite-backend-pabe.onrender.com${blog.image}`}
                     alt={blog.title || 'Blog'}
                     className="w-full h-48 object-cover"
                   />

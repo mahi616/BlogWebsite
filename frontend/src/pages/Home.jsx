@@ -70,7 +70,8 @@ export function Home() {
                   <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group-hover:border-blue-200">
                     <div className={`relative overflow-hidden ${index === 0 ? 'h-64 lg:h-80' : 'h-48'}`}>
                       <img
-                        src={`http://localhost:5000${post.image}`}
+                        // src={`http://localhost:5000${post.image}`}
+                        src={`https://blogwebsite-backend-pabe.onrender.com${post.image}`}
                         alt={post.title}
                         className="w-full h-full object-center group-hover:scale-105 transition-transform duration-300"
                       />

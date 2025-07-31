@@ -11,7 +11,8 @@ export function BlogPost() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/blogs/${id}`);
+        // const res = await fetch(`http://localhost:5000/api/blogs/${id}`);
+        const res = await fetch(`https://blogwebsite-backend-pabe.onrender.com/api/blogs/${id}`);
         const data = await res.json();
         setPost(data);
       } catch (err) {
@@ -50,7 +51,7 @@ export function BlogPost() {
       <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="relative h-64 md:h-80 overflow-hidden">
           <img 
-            src={`http://localhost:5000${post.image}`} 
+            src={`https://blogwebsite-backend-pabe.onrender.com${post.image}`} 
             alt={post.title}
             className="w-full h-full object-cover"
           />

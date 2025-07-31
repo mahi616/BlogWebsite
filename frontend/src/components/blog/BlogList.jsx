@@ -10,7 +10,8 @@ const BlogList = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/blogs'); // Backend URL
+        // const res = await fetch('http://localhost:5000/api/blogs'); // Backend URL
+        const res = await fetch('https://blogwebsite-backend-pabe.onrender.com/api/blogs'); // Backend URL
         const data = await res.json();
         setBlogs(data);
       } catch (error) {
@@ -38,7 +39,7 @@ const BlogList = () => {
                 onClick={()=> navigate(`/blog-list/${blog.id}`)}
               >
                 <img
-                  src={`http://localhost:5000${blog.image}`}
+                  src={`https://blogwebsite-backend-pabe.onrender.com${blog.image}`}
                   alt={blog.title}
                   className="w-full h-48 object-cover"
                 />

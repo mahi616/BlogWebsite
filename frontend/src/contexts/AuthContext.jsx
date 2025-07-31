@@ -14,7 +14,8 @@ export function AuthProvider({ children }) {
 const signUp = async (email, password, fullName, profileImage, about) => {
   setLoading(true);
   try {
-    const res = await axios.post('http://localhost:5000/api/auth/register', {
+    // const res = await axios.post('http://localhost:5000/api/auth/register', {
+    const res = await axios.post('https://blogwebsite-backend-pabe.onrender.com/api/auth/register', {
       email,
       password,
       confirmPassword: password, // for backend validation
@@ -43,7 +44,7 @@ const signUp = async (email, password, fullName, profileImage, about) => {
 const signIn = async (email, password) => {
   setLoading(true);
   try {
-    const res = await axios.post('http://localhost:5000/api/auth/login', {
+    const res = await axios.post('https://blogwebsite-backend-pabe.onrender.com/api/auth/login', {
       email,
       password,
     });

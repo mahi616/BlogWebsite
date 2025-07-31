@@ -19,7 +19,8 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/blogs/${id}`);
+        // const res = await axios.get(`http://localhost:5000/api/blogs/${id}`);
+        const res = await axios.get(`https://blogwebsite-backend-pabe.onrender.com/api/blogs/${id}`);
         const blog = res.data;
 
         setForm({
@@ -29,7 +30,8 @@ const EditBlog = () => {
           image: null,
         });
 
-        setPreview(`http://localhost:5000${blog.image}`);
+        // setPreview(`http://localhost:5000${blog.image}`);
+        setPreview(`https://blogwebsite-backend-pabe.onrender.com${blog.image}`);
       } catch (err) {
         console.error('Error fetching blog:', err);
         alert('Failed to fetch blog.');
@@ -61,7 +63,8 @@ const EditBlog = () => {
     if (form.image) formData.append('image', form.image);
 
     try {
-      await axios.put(`http://localhost:5000/api/blogs/${id}`, formData);
+      // await axios.put(`http://localhost:5000/api/blogs/${id}`, formData);
+      await axios.put(`https://blogwebsite-backend-pabe.onrender.com/api/blogs/${id}`, formData);
       alert('Blog updated successfully!');
       navigate('/my-blogs');
     } catch (err) {

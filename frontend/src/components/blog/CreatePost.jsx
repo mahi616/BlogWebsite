@@ -41,7 +41,8 @@ const CreateBlog = () => {
     formData.append('author',userId)
 
     try {
-      const res = await axios.post('http://localhost:5000/api/blogs/create', formData); // NO HEADERS HERE
+      // const res = await axios.post('http://localhost:5000/api/blogs/create', formData); // NO HEADERS HERE
+      const res = await axios.post('https://blogwebsite-backend-pabe.onrender.com/api/blogs/create', formData); // NO HEADERS HERE
       alert('Blog created successfully!');
       navigate('/my-blogs');
     } catch (err) {
