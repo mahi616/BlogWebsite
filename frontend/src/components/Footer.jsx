@@ -7,9 +7,9 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto px-6 py-10 md:flex md:items-start md:justify-between space-y-10 md:space-y-0">
         
         {/* Branding */}
-        <div className="md:w-1/3">
-          <h2 className="text-2xl font-extrabold mb-2">ModernBlogs</h2>
-          <p className="text-sm text-indigo-100">
+        <div className="md:w-1/3 ">
+          <h2 className="text-2xl text-center font-extrabold mb-2">ModernBlogs</h2>
+          <p className="text-sm text-center text-indigo-100">
             Write. Share. Inspire. Your stories deserve a beautiful home.
           </p>
         </div>
