@@ -43,7 +43,8 @@ const MyBlogs = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
     if (confirmDelete) {
       try {
-        await axios.delete(`/api/blogs/${id}`);
+        // await axios.delete(`/api/blogs/${id}`);
+        await axios.delete(`https://blogwebsite-backend-pabe.onrender.com/api/blogs/${id}`);
         setBlogs((prev) => prev.filter((blog) => blog._id !== id));
       } catch (err) {
         console.error('Delete failed:', err);
