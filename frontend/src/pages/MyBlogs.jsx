@@ -23,7 +23,8 @@ const MyBlogs = () => {
 
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get(`/api/blogs/user/${userId}`);
+        // const res = await axios.get(`/api/blogs/user/${userId}`);
+        const res = await axios.get(`https://blogwebsite-backend-pabe.onrender.com/api/blogs/user/${userId}`);
         setBlogs(res.data);
       } catch (err) {
         console.error('Failed to fetch blogs:', err);
