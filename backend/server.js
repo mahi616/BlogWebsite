@@ -13,7 +13,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors()); // In production, replace with specific origin: cors({ origin: 'https://your-frontend.com' })
+app.use(cors({
+  origin: 'https://mohit-blog-website.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Serve uploads folder
@@ -37,5 +41,5 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .catch((err) => {
   console.error('❌ DB Connection Error:', err);
-  process.exit(1); // Exit if DB connection fails
+  process.exit(1);
 });
