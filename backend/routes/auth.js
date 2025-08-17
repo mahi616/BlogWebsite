@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { z } = require('zod');
 const router = express.Router();
-const User = require('../models/User')
+const User = require('../models/User');
 
 // Zod schema validation
 const registerSchema = z.object({
@@ -23,13 +23,14 @@ router.post('/register', async (req, res) => {
   try {
     const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) {
-      const errorMessages = parsed.error.flatten().fieldErrors;
-      return res.status(400).json({ errors: errorMessages });
+      const errors = parsed.error.flatten().fieldErrors;
+      return res.status(400).json({ errors });
     }
 
-    const { fullName, email, password, profileImage, about } = req.body;
+    const { fullName, email, password, profileImage = '', about = '' } = req.body;
 
-    const userExists = await User.findOne({ email });
+    // Check if user exists
+    const userExists = await User.findOne({ email }).lean();
     if (userExists) {
       return res.status(409).json({ message: 'Email already registered' });
     }
@@ -40,57 +41,48 @@ router.post('/register', async (req, res) => {
       fullName,
       email,
       password: hashedPassword,
-      profileImage, // optional
-      about         // optional
+      profileImage,
+      about
     });
 
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
-    console.error(err);
+    console.error('Register error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
+// @route   POST /api/auth/login
+// @desc    Login user
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate inputs
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
+      return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
+    const user = await User.findOne({ email }).select('_id fullName email password').lean();
+    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
+    // Send only necessary fields
     res.json({
       message: 'Login successful',
-      
       user: {
         _id: user._id,
         fullName: user.fullName,
-        email: user.email,
-      },
+        email: user.email
+      }
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ message: 'server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
-
-
-
-
 
 module.exports = router;
