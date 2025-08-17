@@ -1,93 +1,96 @@
-import React, { createContext, useContext, useState } from 'react';
-import axios from 'axios'; // At the top of the file
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Create the context
 const AuthContext = createContext(undefined);
 
-// Provider component
+// Base URL from environment variable
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);      // Holds current user
-  const [loading, setLoading] = useState(false); // Simulated loading
+  const [user, setUser] = useState(null);    
+  const [loading, setLoading] = useState(false);
 
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
-// sign up function
-const signUp = async (email, password, fullName, profileImage, about) => {
-  setLoading(true);
-  try {
-    // const res = await axios.post('http://localhost:5000/api/auth/register', {
-    const res = await axios.post('https://blogwebsite-backend-pabe.onrender.com/api/auth/register', {
-      email,
-      password,
-      confirmPassword: password, // for backend validation
-      fullName,
-      profileImage, // <-- new field
-      about         // <-- new field
-    });
+  // SIGN UP
+  const signUp = async (email, password, fullName, profileImage = null, about = '') => {
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_BASE}/api/auth/register`, {
+        email,
+        password,
+        confirmPassword: password, // for backend validation
+        fullName,
+        profileImage,
+        about
+      });
 
-    // Set the user data (if returned from backend)
-    setUser({
-      email,
-      fullName,
-      profileImage,
-      about,
-    });
-  } catch (err) {
-    console.error('Signup error:', err);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
+      const userData = res.data.user || {
+        email,
+        fullName,
+        profileImage,
+        about
+      };
 
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('userId', userData._id);
+      localStorage.setItem('role', 'user');
 
-  // sign-in function
-const signIn = async (email, password) => {
-  setLoading(true);
-  try {
-    const res = await axios.post('https://blogwebsite-backend-pabe.onrender.com/api/auth/login', {
-      email,
-      password,
-    });
-    console.log('Login response:', res.data);
+      return userData;
+    } catch (err) {
+      console.error('Signup error:', err);
+      throw err.response?.data || { message: 'Signup failed' };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const userData = res.data.user;
-    setUser(userData);
+  // SIGN IN
+  const signIn = async (email, password) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
+      const userData = res.data.user;
 
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('role', 'user');
-    localStorage.setItem('userId', userData._id);
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('userId', userData._id);
+      localStorage.setItem('role', 'user');
 
-    return res; // ✅ Return the response
-  } catch (err) {
-    console.error('Login error:', err);
-    throw err.response?.data || { message: 'Login failed' };
-  } finally {
-    setLoading(false);
-  }
-};
+      return userData;
+    } catch (err) {
+      console.error('Login error:', err);
+      throw err.response?.data || { message: 'Login failed' };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
-  // Dummy sign-out function
-  const signOut = async () => {
+  // SIGN OUT
+  const signOut = () => {
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
   };
 
-  const value = {
-    user,
-    loading,
-    signUp,
-    signIn,
-    signOut,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-// Hook to use auth
+// Hook
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 }

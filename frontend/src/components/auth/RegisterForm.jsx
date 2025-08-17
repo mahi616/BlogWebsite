@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../../contexts/AuthContext';
-import { Mail, Lock, User, AlertCircle, FileText } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle } from 'lucide-react';
 
 const registerSchema = z
   .object({
@@ -26,11 +26,7 @@ export function RegisterForm() {
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(registerSchema),
   });
 
@@ -40,23 +36,30 @@ export function RegisterForm() {
       setError(null);
       let profileImageUrl = '';
 
-      // Upload profile image to Cloudinary
+      // Upload profile image to Cloudinary if provided
       if (profileImage) {
         const formData = new FormData();
         formData.append('file', profileImage);
-        formData.append('upload_preset', 'your_upload_preset'); // ✅ change this
-        formData.append('cloud_name', 'your_cloud_name'); // ✅ change this
+        formData.append('upload_preset', 'YOUR_UPLOAD_PRESET'); // change this
+        formData.append('cloud_name', 'YOUR_CLOUD_NAME'); // change this
 
-        const res = await fetch('https://api.cloudinary.com/v1_1/your_cloud_name/image/upload', {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload`, {
           method: 'POST',
           body: formData,
         });
-
         const uploadResult = await res.json();
         profileImageUrl = uploadResult.secure_url;
       }
 
-      await signUp(data.email, data.password, data.fullName, data.profileImage, data.about);
+      // Pass the uploaded URL to signUp
+      await signUp(
+        data.email,
+        data.password,
+        data.fullName,
+        profileImageUrl, // ✅ use uploaded URL
+        data.about
+      );
+
       navigate('/login');
     } catch (err) {
       setError(err?.message || 'Failed to create account');
@@ -76,18 +79,16 @@ export function RegisterForm() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             {/* Full Name */}
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('fullName')}
-                  type="text"
-                  placeholder="Full name"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                {...register('fullName')}
+                type="text"
+                placeholder="Full name"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
               {errors.fullName && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
                   <AlertCircle className="w-4 h-4 mr-1" />
@@ -97,18 +98,16 @@ export function RegisterForm() {
             </div>
 
             {/* Email */}
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('email')}
-                  type="email"
-                  placeholder="Email address"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                {...register('email')}
+                type="email"
+                placeholder="Email address"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
                   <AlertCircle className="w-4 h-4 mr-1" />
@@ -118,18 +117,16 @@ export function RegisterForm() {
             </div>
 
             {/* Password */}
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('password')}
-                  type="password"
-                  placeholder="Password"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                {...register('password')}
+                type="password"
+                placeholder="Password"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
                   <AlertCircle className="w-4 h-4 mr-1" />
@@ -139,18 +136,16 @@ export function RegisterForm() {
             </div>
 
             {/* Confirm Password */}
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('confirmPassword')}
-                  type="password"
-                  placeholder="Confirm password"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                {...register('confirmPassword')}
+                type="password"
+                placeholder="Confirm password"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
                   <AlertCircle className="w-4 h-4 mr-1" />
@@ -160,14 +155,12 @@ export function RegisterForm() {
             </div>
 
             {/* About */}
-            <div>
-              <textarea
-                {...register('about')}
-                rows={3}
-                placeholder="Tell us about yourself..."
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
+            <textarea
+              {...register('about')}
+              rows={3}
+              placeholder="Tell us about yourself..."
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            />
 
             {/* Profile Image */}
             <div>

@@ -1,46 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
 import { Calendar, User, Edit, Trash2, ArrowLeft } from 'lucide-react';
 
-export function BlogPost() {
-  const { slug } = useParams();
+const BlogPost = () => {
+  const { id } = useParams(); // assume backend uses blog ID
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const { user } = useAuth();
   const navigate = useNavigate();
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
-    if (slug) {
+    if (id) {
       fetchPost();
     }
-  }, [slug]);
+  }, [id]);
 
   const fetchPost = async () => {
     try {
-      const { data, error } = await supabase
-        .from('posts')
-        .select(`
-          *,
-          profiles:author_id (
-            id,
-            full_name
-          )
-        `)
-        .eq('slug', slug)
-        .eq('published', true)
-        .single();
-
-      if (error) throw error;
-
-      const transformedPost = {
-        ...data,
-        author: data.profiles,
-      };
-
-      setPost(transformedPost);
+      const res = await fetch(`${API_BASE_URL}/blogs/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch post');
+      const data = await res.json();
+      setPost(data);
     } catch (error) {
       console.error('Error fetching post:', error);
     } finally {
@@ -49,19 +31,14 @@ export function BlogPost() {
   };
 
   const handleDelete = async () => {
-    if (!post || !window.confirm('Are you sure you want to delete this post?')) {
-      return;
-    }
+    if (!post || !window.confirm('Are you sure you want to delete this post?')) return;
 
     try {
       setDeleting(true);
-      const { error } = await supabase
-        .from('posts')
-        .delete()
-        .eq('id', post.id);
-
-      if (error) throw error;
-
+      const res = await fetch(`${API_BASE_URL}/blogs/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Delete failed');
       navigate('/');
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -71,13 +48,8 @@ export function BlogPost() {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   if (loading) {
     return (
@@ -106,8 +78,6 @@ export function BlogPost() {
     );
   }
 
-  const isAuthor = user?.id === post.author_id;
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-6">
@@ -126,24 +96,16 @@ export function BlogPost() {
               <div className="flex items-center space-x-4 text-sm text-gray-500">
                 <div className="flex items-center space-x-1">
                   <User className="w-4 h-4" />
-                  <Link to={`/?author=${post.author.id}`} className="hover:text-indigo-600 transition-colors">
-                    {post.author.full_name || 'Anonymous'}
-                  </Link>
+                  <span>{post.author || 'Anonymous'}</span>
                 </div>
 
                 <div className="flex items-center space-x-1">
                   <Calendar className="w-4 h-4" />
-                  <span>{formatDate(post.created_at)}</span>
+                  <span>{formatDate(post.date)}</span>
                 </div>
-
-                {post.updated_at !== post.created_at && (
-                  <span className="text-xs text-gray-400">
-                    (Updated {formatDate(post.updated_at)})
-                  </span>
-                )}
               </div>
 
-              {isAuthor && (
+              {post.isAuthor && (
                 <div className="flex items-center space-x-2">
                   <Link
                     to={`/edit/${post.id}`}
@@ -176,4 +138,6 @@ export function BlogPost() {
       </article>
     </div>
   );
-}
+};
+
+export default BlogPost;

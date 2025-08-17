@@ -5,6 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -29,23 +32,29 @@ export function LoginForm() {
     try {
       setLoading(true);
       setError(null);
-      await signIn(data.email, data.password);
+
+      // Backend login call (optional if using supabase or your custom API)
+      const res = await axios.post(`${API_BASE}/api/auth/login`, data);
+      const { userId, token } = res.data;
+
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('token', token);
+
+      await signIn(data.email, data.password); // auth context
       navigate('/');
-    } catch (error) {
-      setError(error.message || 'Failed to sign in');
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to sign in');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-<div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-  <div className="w-full max-w-md space-y-8">
-
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Welcome back
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
           <p className="mt-2 text-sm text-gray-600">
             Sign in to your account to continue writing
           </p>
@@ -53,42 +62,38 @@ export function LoginForm() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('email')}
-                  type="email"
-                  placeholder="Email address"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                />
+            {/* Email */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                {...register('email')}
+                type="email"
+                placeholder="Email address"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-1" />
-                  {errors.email.message}
+                  <AlertCircle className="w-4 h-4 mr-1" /> {errors.email.message}
                 </p>
               )}
             </div>
 
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('password')}
-                  type="password"
-                  placeholder="Password"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                />
+            {/* Password */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                {...register('password')}
+                type="password"
+                placeholder="Password"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-1" />
-                  {errors.password.message}
+                  <AlertCircle className="w-4 h-4 mr-1" /> {errors.password.message}
                 </p>
               )}
             </div>
@@ -114,10 +119,7 @@ export function LoginForm() {
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link 
-                to="/register" 
-                className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-              >
+              <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
                 Sign up here
               </Link>
             </p>
