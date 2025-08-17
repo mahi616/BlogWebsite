@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +9,6 @@ import Footer from '../Footer';
 const CreateBlog = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [form, setForm] = useState({
     title: '',
@@ -36,11 +37,12 @@ const CreateBlog = () => {
     formData.append('title', form.title);
     formData.append('excerpt', form.excerpt);
     formData.append('content', form.content);
-    if (form.image) formData.append('image', form.image);
-    formData.append('author', userId);
+    formData.append('image', form.image); // ⬅ file object
+    formData.append('author',userId)
 
     try {
-      await axios.post(`${API_BASE_URL}/blogs/create`, formData);
+      // const res = await axios.post('http://localhost:5000/api/blogs/create', formData); // NO HEADERS HERE
+      const res = await axios.post('https://blogwebsite-backend-pabe.onrender.com/api/blogs/create', formData); // NO HEADERS HERE
       alert('Blog created successfully!');
       navigate('/my-blogs');
     } catch (err) {
@@ -48,6 +50,8 @@ const CreateBlog = () => {
       alert('Failed to create blog');
     }
   };
+
+
 
   return (
     <div>
@@ -96,27 +100,55 @@ const CreateBlog = () => {
 
           <div>
             <label className="block text-gray-700 font-medium mb-2">Image</label>
+
             <div
               className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-400 transition"
               onClick={() => document.getElementById('imageUpload').click()}
             >
               {preview ? (
-                <img src={preview} alt="Preview" className="mx-auto w-full h-48 object-cover rounded-lg" />
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="mx-auto w-full h-48 object-cover rounded-lg"
+                />
               ) : (
                 <div className="text-gray-500">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                    />
                   </svg>
                   <p className="mt-2">Click to upload or drag & drop an image</p>
                   <p className="text-sm text-gray-400">PNG, JPG, JPEG (max 2MB)</p>
                 </div>
               )}
             </div>
-            <input id="imageUpload" type="file" name="image" accept="image/*" onChange={handleChange} className="hidden" />
+
+            <input
+              id="imageUpload"
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="hidden"
+            />
           </div>
 
+
           <div className="flex justify-end">
-            <button type="submit" className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-all">
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-all"
+            >
               Publish Blog
             </button>
           </div>

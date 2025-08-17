@@ -6,12 +6,12 @@ import Footer from '../Footer';
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // from .env
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/blogs`);
+        // const res = await fetch('http://localhost:5000/api/blogs'); // Backend URL
+        const res = await fetch('https://blogwebsite-backend-pabe.onrender.com/api/blogs'); // Backend URL
         const data = await res.json();
         setBlogs(data);
       } catch (error) {
@@ -20,7 +20,7 @@ const BlogList = () => {
     };
 
     fetchBlogs();
-  }, [API_BASE_URL]);
+  }, []);
 
   return (
     <div>
@@ -35,16 +35,14 @@ const BlogList = () => {
             blogs.map((blog) => (
               <div
                 key={blog.id}
-                className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer"
-                onClick={() => navigate(`/blog-list/${blog.id}`)}
+                className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                onClick={()=> navigate(`/blog-list/${blog.id}`)}
               >
-                {blog.image && (
-                  <img
-                    src={`${API_BASE_URL}${blog.image}`}
-                    alt={blog.title}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
+                <img
+                  src={`https://blogwebsite-backend-pabe.onrender.com${blog.image}`}
+                  alt={blog.title}
+                  className="w-full h-48 object-cover"
+                />
                 <div className="p-5 flex flex-col justify-between h-full">
                   <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
                     {blog.title}
