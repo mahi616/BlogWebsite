@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -12,12 +13,14 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// CORS Configuration
 app.use(cors({
-  origin: 'https://mohit-blog-website.vercel.app',
+  origin: 'https://mohit-blog-website.vercel.app', // your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
+
+// Body parser
 app.use(express.json());
 
 // Serve uploads folder
@@ -36,8 +39,8 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('✅ MongoDB Atlas connected');
-  app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  console.log('✅ MongoDB connected');
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 })
 .catch((err) => {
   console.error('❌ DB Connection Error:', err);
