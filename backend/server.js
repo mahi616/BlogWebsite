@@ -9,7 +9,6 @@ const axios = require('axios');
 const authRoutes = require('./routes/auth');
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require('./routes/user');
-const { default: axios } = require('axios');
 
 dotenv.config();
 
