@@ -4,14 +4,31 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const axios = require('axios');
 
 const authRoutes = require('./routes/auth');
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require('./routes/user');
+const { default: axios } = require('axios');
 
 dotenv.config();
 
 const app = express();
+const url = 'https://blogwebsite-backend-pabe.onrender.com';
+const interval = 30000;
+
+function reloadWebsite() {
+  axios
+    .get(url)
+    .then((response)=>{
+      console.log('website reloaded');
+    })
+    .catch((error)=>{
+      console.log(`Error : ${error.message}`);
+      
+    })
+}
+setInterval(reloadWebsite, interval);
 
 // CORS Configuration
 app.use(cors({
