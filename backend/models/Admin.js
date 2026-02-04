@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const adminSchema = new mongoose.Schema({
   name: {
@@ -8,7 +8,7 @@ const adminSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // prevents duplicates
   },
   password: {
     type: String,
@@ -20,4 +20,4 @@ const adminSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-export default mongoose.model("Admin", adminSchema);
+module.exports = mongoose.model("Admin", adminSchema);
