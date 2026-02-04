@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const axios = require('axios');
 const adminRoutes =require('./routes/adminRoutes')
+const adminAuthRoutes = require('./routes/adminAuth')
 
 const authRoutes = require('./routes/auth');
 const blogRoutes = require('./routes/blogRoutes');
@@ -45,6 +46,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/admin',adminRoutes);
+app.use('/api/admin', adminAuthRoutes)
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/blogs', blogRoutes);
