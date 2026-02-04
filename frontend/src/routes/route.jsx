@@ -12,6 +12,7 @@ import  BlogList  from "../components/blog/BlogList";
 import  CreatePost  from "../components/blog/CreatePost";
 import  EditPost  from "../components/blog/EditPost";
 import NotFound from "../pages/NotFound";
+import AdminLogin from "../components/AdminLogin";
 
 
 const route = createBrowserRouter([
@@ -41,6 +42,7 @@ const route = createBrowserRouter([
 
 
     { path:'/login', element:<LoginForm/> },
+    { path:'/admin/login', element:<AdminLogin/> },
     { path:'/register', element:<RegisterForm/> },
 
 
